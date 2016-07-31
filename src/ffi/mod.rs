@@ -42,7 +42,7 @@ pub mod errors;
 
 mod config;
 mod dns;
-mod helper;
+pub mod helper;
 mod launcher_config_handler;
 mod nfs;
 mod test_utils;

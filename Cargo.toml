@@ -25,6 +25,10 @@ sodiumoxide = "=0.0.10"
 time = "~0.1.35"
 unwrap = "~1.1.0"
 
+[dependencies.hyper]
+version = "0.9"
+default-features = false
+
 [dev-dependencies]
 docopt = "~0.6.81"
 regex = "~0.1.73"
