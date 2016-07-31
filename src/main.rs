@@ -6,8 +6,12 @@ extern crate unwrap;
 extern crate log;
 
 use std::sync::{Arc, Mutex};
+use std::fs::File;
+use std::io::{Write};
+use std::os::unix::io::FromRawFd;
 
 use safe_core::core::client::Client;
+use safe_core::core::utility::{ generate_random_string };
 use safe_core::ffi::{helper};
 use safe_core::ffi::errors::{FfiError};
 
@@ -26,7 +30,17 @@ use safe_core::nfs::helper::directory_helper::DirectoryHelper;
 
 fn main() {
 
-    let client = Arc::new(Mutex::new(unwrap!(Client::create_unregistered_client())));
+    let server_admin_id = generate_random_string(32).unwrap_or("test".to_owned());
+    println!("managed ID: {}", server_admin_id);
+     let client = Arc::new(Mutex::new(unwrap!(Client::create_unregistered_client())));
+
+    unsafe {
+        let mut ipc = File::from_raw_fd(3);
+        match ipc.write_fmt(format_args!("{{\"manageId\": \"{}\"}}\n", server_admin_id)){
+            Ok(_) => println!("wrote to channel"),
+            Err(msg) => println!("couldn't write to channel: {:?}", msg)
+        }
+    }
 
     fn get_file (client: Arc<Mutex<Client>>,
                 long_name: &str, service: &str, uri: RequestUri) -> Result<Vec<u8>, FfiError> {
@@ -50,6 +64,8 @@ fn main() {
         let size = reader.size();
         Ok(try!(reader.read(0, size)))
     }
+
+    println!("Server starting at 127.0.0.1:3000");
 
     Server::http("127.0.0.1:3000").unwrap()
         .handle(move | req: Request, mut res: Response| {
