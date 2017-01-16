@@ -68,34 +68,41 @@ pub unsafe extern "C" fn idata_new_self_encryptor(app: *const App,
 /// Write to Self Encryptor
 #[no_mangle]
 pub unsafe extern "C" fn idata_write_to_self_encryptor(app: *const App,
-                                                       se_h: SEWriterHandle,
+                                                       _: SEWriterHandle,
                                                        data: *const u8,
                                                        size: usize,
                                                        user_data: *mut c_void,
                                                        o_cb: extern "C" fn(*mut c_void, i32)) {
     let user_data = OpaqueCtx(user_data);
-
+    println!("3");
     catch_unwind_cb(user_data, o_cb, || {
-        let data_slice = slice::from_raw_parts(data, size);
+        let _data_slice = slice::from_raw_parts(data, size);
+        println!("4");
+        // let data_slice = slice::from_raw_parts(ptr, len);
+        // drop(data);
 
-        (*app).send(move |_, context| {
-            let fut = {
-                match context.object_cache().get_se_writer(se_h) {
-                    Ok(writer) => writer.write(data_slice),
-                    Err(e) => {
-                        o_cb(user_data.0, ffi_error_code!(e));
-                        return None;
-                    }
-                }
-            };
-            let fut = fut.map_err(AppError::from)
-                .then(move |res| {
-                    o_cb(user_data.0, ffi_result_code!(res));
-                    Ok(())
-                })
-                .into_box();
-            Some(fut)
-        })
+        let res = (*app).send(move |_, _context| {let _ = _data_slice.len(); None} );
+        println!("----: {}", _data_slice.len());
+        res
+
+        // (*app).send(move |_, context| {
+        //     let fut = {
+        //         match context.object_cache().get_se_writer(se_h) {
+        //             Ok(writer) => writer.write(data_slice),
+        //             Err(e) => {
+        //                 o_cb(user_data.0, ffi_error_code!(e));
+        //                 return None;
+        //             }
+        //         }
+        //     };
+        //     let fut = fut.map_err(AppError::from)
+        //         .then(move |res| {
+        //             o_cb(user_data.0, ffi_result_code!(res));
+        //             Ok(())
+        //         })
+        //         .into_box();
+        //     Some(fut)
+        // })
     });
 }
 
