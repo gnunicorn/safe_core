@@ -76,12 +76,12 @@ pub unsafe extern "C" fn idata_write_to_self_encryptor(app: *const App,
     let user_data = OpaqueCtx(user_data);
 
     catch_unwind_cb(user_data, o_cb, || {
-        let data_slice = slice::from_raw_parts(data, size).to_owned();
+        let data_slice = slice::from_raw_parts(data, size);
 
         (*app).send(move |_, context| {
             let fut = {
                 match context.object_cache().get_se_writer(se_h) {
-                    Ok(writer) => writer.write(&data_slice),
+                    Ok(writer) => writer.write(data_slice),
                     Err(e) => {
                         o_cb(user_data.0, ffi_error_code!(e));
                         return None;
