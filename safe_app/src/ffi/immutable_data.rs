@@ -80,7 +80,6 @@ pub unsafe extern "C" fn idata_write_to_self_encryptor(app: *const App,
 
         (*app).send(move |_, context| {
             let fut = {
-                println!("{:}", se_h);
                 match context.object_cache().get_se_writer(se_h) {
                     Ok(writer) => writer.write(data_slice),
                     Err(e) => {
@@ -108,10 +107,8 @@ pub unsafe extern "C" fn idata_close_self_encryptor(app: *const App,
                                                     user_data: *mut c_void,
                                                     o_cb: extern "C" fn(*mut c_void,
                                                                         i32,
-                                                                        [u8; XOR_NAME_LEN])) {
+                                                                        *const [u8; XOR_NAME_LEN])) {
     let user_data = OpaqueCtx(user_data);
-
-    println!("calling close");
 
     catch_unwind_cb(user_data, o_cb, || {
         (*app).send(move |client, context| {
@@ -122,8 +119,6 @@ pub unsafe extern "C" fn idata_close_self_encryptor(app: *const App,
             let se_writer = try_cb!(context.object_cache().remove_se_writer(se_h),
                                     user_data,
                                     o_cb);
-
-            println!("closing {:?} {:?}", se_h, cipher_opt_h);
 
             se_writer.close()
                 .map_err(AppError::from)
@@ -142,8 +137,6 @@ pub unsafe extern "C" fn idata_close_self_encryptor(app: *const App,
                 })
                 .and_then(move |data| {
                     let name = *data.name();
-                    println!("made data {:?}", name);
-
                     client3.put_idata(data)
                         .map_err(AppError::from)
                         .map(move |_| name)
@@ -151,11 +144,9 @@ pub unsafe extern "C" fn idata_close_self_encryptor(app: *const App,
                 .then(move |result| {
                     println!("uuu result: {:?}", result);
                     match result {
-                        Ok(name) => {
-                            println!("r {:?}", name);
-                            o_cb(user_data.0, 0, name.0)
-                        },
-                        Err(e) => o_cb(user_data.0, ffi_error_code!(e), Default::default()),
+                        Ok(name) => 
+                            o_cb(user_data.0, 0, &name.0),
+                        Err(e) => o_cb(user_data.0, ffi_error_code!(e), &[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
                     }
                     Ok(())
                 })
@@ -168,18 +159,15 @@ pub unsafe extern "C" fn idata_close_self_encryptor(app: *const App,
 /// Fetch Self Encryptor
 #[no_mangle]
 pub unsafe extern "C" fn idata_fetch_self_encryptor(app: *const App,
-                                                    addr: [u8; XOR_NAME_LEN],
+                                                    name: *const [u8; XOR_NAME_LEN],
                                                     user_data: *mut c_void,
                                                     o_cb: extern "C" fn(*mut c_void,
                                                                         i32,
                                                                         SEReaderHandle)) {
 
-    println!("a {:?}", addr);
-    let name = XorName(addr).to_owned();
-    println!("b {:?}", name);
+    let name = XorName(*name).to_owned();
     catch_unwind_cb(user_data, o_cb, || {
         let user_data = OpaqueCtx(user_data);
-        println!("soon");
 
         (*app).send(move |client, context| {
             println!("in");
