@@ -54,7 +54,7 @@ extern crate futures;
 extern crate log;
 extern crate lru_cache;
 extern crate maidsafe_utilities;
-#[cfg(test)]
+#[cfg(any(test, debug_assertions))]
 extern crate rand;
 extern crate routing;
 extern crate rustc_serialize;
@@ -70,7 +70,7 @@ pub mod ffi;
 pub mod object_cache;
 
 mod errors;
-#[cfg(test)]
+#[cfg(any(test, debug_assertions))]
 mod test_utils;
 
 pub use self::errors::*;

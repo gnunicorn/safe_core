@@ -50,6 +50,9 @@ pub mod nfs;
 
 mod helper;
 
+#[cfg(debug_assertions)]
+pub mod testing;
+
 /// Create unregistered app.
 #[no_mangle]
 pub unsafe extern "C" fn app_unregistered(user_data: *mut c_void,

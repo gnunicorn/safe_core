@@ -37,6 +37,7 @@ const ACCESS_CONTAINER_TAG: u64 = 1000;
 
 // Run the given closure inside the app's event loop. The return value of
 // the closure is returned immediately.
+#[allow(unused)]
 pub fn run_now<F, R>(app: &App, f: F) -> R
     where F: FnOnce(&Client, &AppContext) -> R + Send + 'static,
           R: Send + 'static
@@ -54,6 +55,7 @@ pub fn run_now<F, R>(app: &App, f: F) -> R
 // Run the given closure inside the app event loop. The closure should
 // return a future which will then be driven to completion and its result
 // returned.
+#[allow(unused)]
 pub fn run<F, I, T>(app: &App, f: F) -> T
     where F: FnOnce(&Client, &AppContext) -> I + Send + 'static,
           I: IntoFuture<Item = T, Error = AppError> + 'static,
@@ -77,6 +79,7 @@ pub fn run<F, I, T>(app: &App, f: F) -> T
 }
 
 // Create registered app.
+#[allow(unused)]
 pub fn create_app() -> App {
     let app_id = unwrap!(utils::generate_random_string(10));
 
