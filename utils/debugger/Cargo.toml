@@ -1,0 +1,12 @@
+[package]
+name = "safe-debugger"
+version = "0.1.0"
+authors = ["Benjamin Kampmann <ben@gnunicorn.org>"]
+
+[dependencies]
+safe_core = { path = "../../safe_core" }
+safe_app = { path = "../../safe_app" }
+clap = "2.20.1"
+
+[features]
+use-mock-routing = ["safe_app/use-mock-routing"]
