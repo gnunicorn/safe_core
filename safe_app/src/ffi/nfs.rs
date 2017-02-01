@@ -41,16 +41,20 @@ pub unsafe extern "C" fn file_fetch(app: *const App,
                                     o_cb: extern "C" fn(*mut c_void, i32, *const File, u64)) {
     catch_unwind_cb(user_data, o_cb, || {
         let file_name = from_c_str(file_name)?;
+        println!("fetching {:}", file_name);
         let user_data = OpaqueCtx(user_data);
 
         (*app).send(move |client, context| {
             let parent = try_cb!(context.object_cache().get_mdata_info(parent_h),
                                  user_data.0,
                                  o_cb);
+            println!("inner");
 
             file_helper::fetch(client.clone(), parent.clone(), file_name)
                 .map(move |(version, file)| {
+                    println!("found");
                     let ffi_file = file.into_repr_c();
+                    println!("repr");
                     o_cb(user_data.0, 0, &ffi_file, version)
                 })
                 .map_err(AppError::from)

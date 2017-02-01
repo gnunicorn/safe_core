@@ -136,6 +136,7 @@ pub unsafe extern "C" fn idata_close_self_encryptor(app: *const App,
                 })
                 .and_then(move |data| {
                     let name = *data.name();
+                    println!("outgoing {:?}, {:?}", name, &name.0);
 
                     client3.put_idata(data)
                         .map_err(AppError::from)
@@ -164,6 +165,7 @@ pub unsafe extern "C" fn idata_fetch_self_encryptor(app: *const App,
                                                                         SEReaderHandle)) {
     catch_unwind_cb(user_data, o_cb, || {
         let user_data = OpaqueCtx(user_data);
+        println!("incoming {:?}", *name);
         let name = XorName(*name);
 
         (*app).send(move |client, context| {

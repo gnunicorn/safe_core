@@ -54,9 +54,12 @@ impl File {
     /// Construct FFI wrapper for the native rust `File`, consuming the file.
     pub fn into_repr_c(self) -> FfiFile {
         // TODO: move the metadata, not clone.
+        println!("pre meta");
         let user_metadata = self.user_metadata().to_vec();
+        println!("post meta");
         let (user_metadata_ptr, user_metadata_len, user_metadata_cap) =
             vec_into_raw_parts(user_metadata);
+        println!("in parts");
 
         FfiFile {
             size: self.size(),
