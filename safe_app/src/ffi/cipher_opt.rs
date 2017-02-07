@@ -25,7 +25,7 @@ use ffi_utils::{OpaqueCtx, catch_unwind_cb};
 use maidsafe_utilities::serialisation::{deserialise, serialise};
 use object_cache::{CipherOptHandle, EncryptKeyHandle};
 use rust_sodium::crypto::{box_, sealedbox, secretbox};
-use safe_core::CoreError;
+// use safe_core::CoreError;
 use std::os::raw::c_void;
 
 /// Cipher Options
@@ -76,12 +76,12 @@ impl CipherOpt {
             }
         }
     }
-
+    
     /// Decrypt something encrypted by CipherOpt::encrypt()
-    pub fn decrypt(cipher_text: &[u8],
-                   sym_key: &secretbox::Key,
-                   asym_pk: &box_::PublicKey,
-                   asym_sk: &box_::SecretKey)
+    pub fn decrypt(cipher_text: &[u8])
+                   // sym_key: &secretbox::Key,
+                   // asym_pk: &box_::PublicKey,
+                   // asym_sk: &box_::SecretKey)
                    -> Result<Vec<u8>, AppError> {
         if cipher_text.is_empty() {
             return Ok(Vec::new());
@@ -89,14 +89,15 @@ impl CipherOpt {
 
         match deserialise::<WireFormat>(cipher_text)? {
             WireFormat::Plain(plain_text) => Ok(plain_text),
-            WireFormat::Symmetric { nonce, cipher_text } => {
-                Ok(secretbox::open(&cipher_text, &nonce, sym_key)
-                    .map_err(|()| CoreError::SymmetricDecipherFailure)?)
-            }
-            WireFormat::Asymmetric(cipher_text) => {
-                Ok(sealedbox::open(&cipher_text, asym_pk, asym_sk)
-                    .map_err(|()| CoreError::AsymmetricDecipherFailure)?)
-            }
+            _ => Err(AppError::OperationForbidden)
+            // WireFormat::Symmetric { nonce, cipher_text } => {
+            //     Ok(secretbox::open(&cipher_text, &nonce, sym_key)
+            //         .map_err(|()| CoreError::SymmetricDecipherFailure)?)
+            // }
+            // WireFormat::Asymmetric(cipher_text) => {
+            //     Ok(sealedbox::open(&cipher_text, asym_pk, asym_sk)
+            //         .map_err(|()| CoreError::AsymmetricDecipherFailure)?)
+            // }
         }
     }
 }

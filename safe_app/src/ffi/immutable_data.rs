@@ -169,18 +169,19 @@ pub unsafe extern "C" fn idata_fetch_self_encryptor(app: *const App,
         let name = XorName(*name);
 
         (*app).send(move |client, context| {
-            let client2 = client.clone();
+            // let client2 = client.clone();
             let client3 = client.clone();
-            let context2 = context.clone();
+            // let context2 = context.clone();
             let context3 = context.clone();
 
             immutable_data::get_value(client, &name, None)
                 .map_err(AppError::from)
                 .and_then(move |enc_data_map| {
-                    let sym_key = context2.sym_enc_key()?;
-                    let (asym_pk, asym_sk) = client2.encryption_keypair()?;
-                    let ser_data_map =
-                        CipherOpt::decrypt(&enc_data_map, sym_key, &asym_pk, &asym_sk)?;
+
+                    // let sym_key = context2.sym_enc_key()?;
+                    // let (asym_pk, asym_sk) = client2.encryption_keypair()?;
+                    let ser_data_map = CipherOpt::decrypt(&enc_data_map)?;
+                    //, sym_key, &asym_pk, &asym_sk)?;
                     let data_map = deserialise(&ser_data_map)?;
 
                     Ok(data_map)

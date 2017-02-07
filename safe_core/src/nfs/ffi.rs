@@ -41,13 +41,13 @@ pub struct File {
     pub data_map_name: [u8; XOR_NAME_LEN],
 }
 
-impl Drop for File {
-    #[allow(unsafe_code)]
-    fn drop(&mut self) {
-        let _ = unsafe {
-            Vec::from_raw_parts(self.user_metadata_ptr,
-                                self.user_metadata_len,
-                                self.user_metadata_cap)
-        };
-    }
-}
+// impl Drop for File {
+//     #[allow(unsafe_code)]
+//     fn drop(&mut self) {
+//         let _ = unsafe {
+//             Vec::from_raw_parts(self.user_metadata_ptr,
+//                                 self.user_metadata_len,
+//                                 self.user_metadata_cap)
+//         };
+//     }
+// }
