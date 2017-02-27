@@ -6,6 +6,10 @@ env:
 os:
   - linux
   - osx
+
+services: docker
+sudo: required
+
 language: rust
 rust:
   - stable
