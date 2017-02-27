@@ -15,13 +15,24 @@ branches:
   only:
     - master
     - dev
+    - /^v\d+\.\d+\.\d+.*$/
 cache:
   cargo: true
+
+before_install: set -e
+
+install:
+  - if [ -z $TRAVIS_TAG ]; then
+      sh .ci/install.sh;
+    fi
+  - source ~/.cargo/env || true
 
 before_script:
   - (which cargo-install-update && cargo install-update cargo-update) || cargo install cargo-update
   - (which cargo-prune && cargo install-update cargo-prune) || cargo install cargo-prune
-  - if [ "${TRAVIS_RUST_VERSION}" = stable ]; then
+  - if [ -z $TRAVIS_TAG ]; then
+      echo "skipping test suite for deploy";
+    elif [ "${TRAVIS_RUST_VERSION}" = stable ]; then
       (which rustfmt && cargo install-update rustfmt) || cargo install rustfmt;
     elif [ "${TRAVIS_OS_NAME}" = linux ]; then
       clippy_vers=0.0.99;
@@ -30,7 +41,9 @@ before_script:
       fi
     fi
 script:
-  - if [ "${TRAVIS_RUST_VERSION}" = stable ]; then
+  - if [ -z $TRAVIS_TAG ]; then
+      echo "skipping test suite for deploy";
+    elif [ "${TRAVIS_RUST_VERSION}" = stable ]; then
         (
             set -x;
             echo "--- Check format ---" &&
@@ -72,3 +85,28 @@ script:
     fi
 before_cache:
   - cargo prune
+
+
+before_deploy:
+  - if [ -z $TRAVIS_TAG ]; then
+      sh .ci/before_deploy.sh;
+    fi
+
+deploy:
+  # TODO update `api_key.secure`
+  # - Create a `public_repo` GitHub token. Go to: https://github.com/settings/tokens/new
+  # - Encrypt it: `travis encrypt YOUR_TOKEN`
+  # - Paste the output down here
+  api_key:
+    secure: "VbdxST1+rBprNucUj6FgK9Tf1V8j6681djhUW2vvXGzr3RgRbgGRYFU1Izb9YCXCMOv/u4f7B/1ONap6Nin5ubcHiuEyODzrIFEE8VVvUBIdCDRr8hdgR0RZZ2sIkOWlXaaK+pQuYAaI3RpWEXBCDw2LBHNaG+lr0399UPa4W6YTETwf/85ATR4UoBD9IIUdwBf/KDrnJdJK2dqADz6T2D7u9tvT+CFNp/AwJbrvLaivwxzRGN21CAEie5dyl4F7o1AshKPxbcwU5dqVBHW7kCX5/C7dLu+56FrsFIVEd6DdA2hACaLpEKkxah6IXEVmMqFwv4FujmYBDYqrjb81D14QtjA/kl8nM5+P5Zv+GLsByvxrd97hxO4tS7I5nyugFbKvlitKBkv9d9yX9N1Sbxprlj1CJ8Oft9twiKFKfVp0rDtVgUvNn7ErThIRRcvD40etjbu6HTklX9w5v5LjjmgLW9LhpLBH27zmviESwY64IkHPrWUVC0Y+0wzQDNgOD1Pw7zVQYvRZ09W8TF/tQCgk7+4uyo6NLjPZI+iehBzkzpzy9yZx8XtqJquZtWgo+dxf0NRWnElXIiUBfitj6RzZKJtENl+KjunmSgTK4OkjI7xOkSMYFxNy3/HXnpisB2l9QpQW+BPYYg9ip9s0XGVyyZ4+HsLp8XzXu+s2Zm4="
+  file_glob: true
+  file: $CRATE_NAME-$TRAVIS_TAG-*
+  on:
+    # TODO Here you can pick which targets will generate binary releases
+    # In this example, there are some targets that are tested using the stable
+    # and nightly channels. This condition makes sure there is only one release
+    # for such targets and that's generated using the stable channel
+    condition: $TRAVIS_RUST_VERSION = stable
+    tags: true
+  provider: releases
+  skip_cleanup: true
