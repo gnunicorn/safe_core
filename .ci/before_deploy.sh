@@ -1,3 +1,4 @@
+#!/bin/bash
 # This script takes care of building your crate and packaging it for release
 
 set -ex
@@ -64,7 +65,7 @@ do
     for target in "${TARGETS[@]}"
     do
         export TARGET=${target%,*}       # before comma
-        export TARGET_NAME=${tupletarget#*,}   # after comma
+        export TARGET_NAME=${target#*,}   # after comma
 
         for feat in "${FEATURES[@]}"
         do

@@ -23,7 +23,7 @@ before_install: set -e
 
 install:
   - if [ ! -z $TRAVIS_TAG ]; then
-      sh .ci/install.sh;
+      bash .ci/install.sh;
     fi
   - source ~/.cargo/env || true
 
@@ -89,7 +89,7 @@ before_cache:
 
 before_deploy:
   - if [ ! -z $TRAVIS_TAG ] && [ "${TRAVIS_OS_NAME}" = linux ]; then
-      sh .ci/before_deploy.sh;
+      bash .ci/before_deploy.sh;
     fi
 
 deploy:
