@@ -23,7 +23,7 @@ main() {
     curl -LSfs https://japaric.github.io/trust/install.sh | \
         sh -s -- \
            --force \
-           --git japaric/cross \
+           --git gnunicorn/cross \
            --tag $tag \
            --target $target
 }
