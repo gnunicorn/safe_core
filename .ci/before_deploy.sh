@@ -3,6 +3,10 @@
 
 set -ex
 
+export PATH="$HOME/.cargo/bin:$PATH"
+which cargo
+which rustc
+
 main() {
     local src=$(pwd) \
           stage=
@@ -63,7 +67,7 @@ do
     do
         export TARGET=${target%,*}        # before comma
         export TARGET_NAME=${target#*,}   # after comma
-        rustup toolchain install $TARGET
+        rustup target install $TARGET
 
         for feat in "${FEATURES[@]}"
         do
