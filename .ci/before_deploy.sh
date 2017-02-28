@@ -3,6 +3,10 @@
 
 set -ex
 
+export PATH="$HOME/.cargo/bin:$PATH"
+which cargo
+which rustc
+
 main() {
     local src=$(pwd) \
           stage=
