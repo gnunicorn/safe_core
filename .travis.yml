@@ -25,12 +25,6 @@ cache:
 
 before_install: set -e
 
-install:
-  - if [ ! -z $TRAVIS_TAG ]; then
-      bash .ci/install.sh;
-    fi
-  - source ~/.cargo/env || true
-
 before_script:
   - (which cargo-install-update && cargo install-update cargo-update) || cargo install cargo-update
   - (which cargo-prune && cargo install-update cargo-prune) || cargo install cargo-prune

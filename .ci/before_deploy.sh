@@ -19,7 +19,7 @@ main() {
     test -f Cargo.lock || cargo generate-lockfile
 
     cargo clean
-    cross rustc --target $TARGET --release --features="$FEATURE" --package $CRATE_NAME 
+    cargo rustc --target $TARGET --release --features="$FEATURE" --package $CRATE_NAME 
 
     # copy linux
     cp target/$TARGET/release/lib$CRATE_NAME* $stage/
@@ -35,8 +35,6 @@ main() {
         zip $src/$CRATE_NAME$FEATURE_NAME-$TRAVIS_TAG-$TARGET.zip *
     fi
     cd $src
-
-
 
     rm -rf $stage
 }
@@ -63,19 +61,15 @@ do
 
     for target in "${TARGETS[@]}"
     do
-        export TARGET=${target%,*}       # before comma
+        export TARGET=${target%,*}        # before comma
         export TARGET_NAME=${target#*,}   # after comma
+        rustup toolchain install $TARGET
 
         for feat in "${FEATURES[@]}"
         do
-            export FEATURE=${feat%,*}          # before comma
+            export FEATURE=${feat%,*}           # before comma
             export FEATURE_NAME="-${feat#*,}"   # after comma
             main
         done
     done
-
-    # # move the package up
-    # cp *.zip ../
-    # # and leave the create
-    # cd ..
 done
