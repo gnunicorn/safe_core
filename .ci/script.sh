@@ -2,21 +2,37 @@
 
 set -ex
 
-# TODO This is the "test phase", tweak it as you see fit
-main() {
-    cargo clean
-    cross build --target $TARGET
-    cross build --target $TARGET --release
+eval $CRATES_CONFIG
 
-    if [ ! -z $DISABLE_TESTS ]; then
-        return
-    fi
+echo "--- Check format ---"
+for PKG in "${FMT_CHECK_CRATES[@]}"
+do
+	echo "-- checking: ${PKG}"
+	
+	cd $PKG
+	# TODO: do we want to do that target specific?
+    cargo fmt -- --write-mode=diff
+    cd ..
+done
 
-    cross test --target $TARGET
-    cross test --target $TARGET --release
-}
 
-# we don't run the "test phase" when doing deploys
-if [ -z $TRAVIS_TAG ]; then
-    main
-fi
+echo "--- Test ffi_utils ---"
+cd ffi_utils
+cargo test --target $TARGET --verbose --release
+
+
+echo "--- Check compilation against actual routing ---"
+for PKG in "${TEST_CRATES[@]}"
+do
+	echo "-- compiling: ${PKG}"
+    cargo rustc --target $TARGET --verbose --release --package $PKG
+    cargo rustc --target $TARGET --verbose --features testing --release --package $PKG -- --test -Zno-trans
+done
+
+
+echo "--- Test against mock ---"
+for PKG in "${TEST_CRATES[@]}"
+do
+	echo "-- testing: ${PKG}"
+	cargo test --target $TARGET --verbose --release --features "$Features" --package $PKG
+done
