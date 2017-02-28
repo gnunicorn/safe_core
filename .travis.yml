@@ -2,7 +2,7 @@ env:
   global:
     - Features="use-mock-routing testing"
     - RUST_BACKTRACE=1
-    - PATH=$PATH:$HOME/.cargo/bin
+    - PATH="$PATH:$HOME/.cargo/bin"
 os:
   - linux
   - osx
@@ -23,21 +23,29 @@ branches:
 cache:
   cargo: true
 
-before_install: set -e
+before_install:
+  - set -e
+  - if [ ! -z $TRAVIS_TAG ]; then
+      curl https://sh.rustup.rs -sSf | \
+        sh -s -- -y
+    fi
 
 before_script:
-  - (which cargo-install-update && cargo install-update cargo-update) || cargo install cargo-update
-  - (which cargo-prune && cargo install-update cargo-prune) || cargo install cargo-prune
-  - if [ ! -z $TRAVIS_TAG ]; then
-      echo "skipping test suite for deploy";
-    elif [ "${TRAVIS_RUST_VERSION}" = stable ]; then
-      (which rustfmt && cargo install-update rustfmt) || cargo install rustfmt;
-    elif [ "${TRAVIS_OS_NAME}" = linux ]; then
-      clippy_vers=0.0.99;
-      if ! cargo clippy --version | grep -q $clippy_vers; then
-        cargo install clippy --vers=$clippy_vers --force;
-      fi
-    fi
+  - which cargo
+  - which rustc
+  - which rustup
+  # - (which cargo-install-update && cargo install-update cargo-update) || cargo install cargo-update
+  # - (which cargo-prune && cargo install-update cargo-prune) || cargo install cargo-prune
+  # - if [ ! -z $TRAVIS_TAG ]; then
+  #     echo "skipping test suite for deploy";
+  #   elif [ "${TRAVIS_RUST_VERSION}" = stable ]; then
+  #     (which rustfmt && cargo install-update rustfmt) || cargo install rustfmt;
+  #   elif [ "${TRAVIS_OS_NAME}" = linux ]; then
+  #     clippy_vers=0.0.99;
+  #     if ! cargo clippy --version | grep -q $clippy_vers; then
+  #       cargo install clippy --vers=$clippy_vers --force;
+  #     fi
+    # fi
 script:
   - if [ ! -z $TRAVIS_TAG ]; then
       echo "skipping test suite for deploy";
