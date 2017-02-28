@@ -92,7 +92,7 @@ before_cache:
 
 
 before_deploy:
-  - if [ ! -z $TRAVIS_TAG ] && [ "${TRAVIS_OS_NAME}" = linux ]; then
+  - if [ ! -z $TRAVIS_TAG ]; then
       bash .ci/before_deploy.sh;
     fi
 
