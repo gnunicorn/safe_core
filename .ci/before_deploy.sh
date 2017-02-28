@@ -3,6 +3,10 @@
 
 set -ex
 
+export PATH="$HOME/.cargo/bin:$PATH"
+which cargo
+which rustc
+
 main() {
     local src=$(pwd) \
           stage=
@@ -46,30 +50,29 @@ declare -a FEATURES=("use-mock-routing testing,dev")
 for crate in "${CRATES[@]}"
 do
     export CRATE_NAME="$crate"
-    if [ $TRAVIS_OS_NAME = linux ]; then
+    # if [ $TRAVIS_OS_NAME = linux ]; then
 
-        declare -a TARGETS=("i686-unknown-linux-gnu,linux-x32"
-                            "x86_64-unknown-linux-gnu,linux-x64"
-                            "i686-unknown-linux-musl"
-                            "x86_64-unknown-linux-musl"
-                            )
-    else
-        declare -a TARGETS=("x86_64-apple-darwin,darwin-x64"
-                            "i686-apple-darwin,darwin-x32"
-                            )
-    fi
+    #     declare -a TARGETS=("i686-unknown-linux-gnu,linux-x32"
+    #                         "x86_64-unknown-linux-gnu,linux-x64"
+    #                         "i686-unknown-linux-musl"
+    #                         "x86_64-unknown-linux-musl"
+    #                         )
+    # else
+    #     declare -a TARGETS=("x86_64-apple-darwin,darwin-x64"
+    #                         "i686-apple-darwin,darwin-x32"
+    #                         )
+    # fi
 
-    for target in "${TARGETS[@]}"
+    # for target in "${TARGETS[@]}"
+    # do
+    #     export TARGET=${target%,*}        # before comma
+    #     export TARGET_NAME=${target#*,}   # after commas
+
+    for feat in "${FEATURES[@]}"
     do
-        export TARGET=${target%,*}        # before comma
-        export TARGET_NAME=${target#*,}   # after comma
-        rustup toolchain install $TARGET
-
-        for feat in "${FEATURES[@]}"
-        do
-            export FEATURE=${feat%,*}           # before comma
-            export FEATURE_NAME="-${feat#*,}"   # after comma
-            main
-        done
+        export FEATURE=${feat%,*}           # before comma
+        export FEATURE_NAME="-${feat#*,}"   # after comma
+        main
     done
+    # done
 done
