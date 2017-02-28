@@ -104,7 +104,7 @@ deploy:
   api_key:
     secure: "xulXTBCGT8jK7XuRhbfahD/Z42uKlaXmblj6DN1ERq9I6qRy7Z4D4WRbwDtEl5PY6pfOZ9TocE72GeaG6QmSzdc8PMn+QIfri4Eb0EGAMCrEHo2ed7nTJqNcwGf2sENVEjXrvzxNJGaLK9H2L+7npZELg0Ei1zNdp4sQHOZWJ6C/kgbx6wz8zbBdtkm63JMNeRylyYxUwINahpdPeqmEMWWKiHlj5JOKNwQLLMQngzJHvSlrU0ZXvIWlHICNp6Ofk4cc5WykjNVbbXvaGm/nHjgfRIthracKkeTQHBi2ot14DgPrVkp/7+qfn64JApIyEhXkNJO3sJsUNccdgf3YPem3DrmkKhvEN5MBBjq5mVVU7xRs21c781wp9n0SMq/dIaqYRqtBbJniBL1qvUO1yOaK+rewTZCT97PAA10PvBo4F3jNgc8/OYUKIxXYo3n2r1BxovPir+CPYpm5vOjJ0nyYHY5vd939ZVuc1Fw+FQ7p7WsTQ6VKQV0CwMhbkBhLdZDcQvMiiEWTfQzY6LUYbXJN9/alueuZeR+syOSTw3Lb+MjuIslAxgWdRgGm26Am9RKmBgIjTZdLDQswJbrZ+QkudnQKfAk4E8PBhhb6k3vfPOvsuvhnyDa/+ahxiKfSml4J/G/PaBHCSYQCovcA6K7H3MEQLjMMhFHe3299N2o="
   file_glob: true
-  file: *.zip
+  file: "*.zip"
   on:
     # TODO Here you can pick which targets will generate binary releases
     # In this example, there are some targets that are tested using the stable
