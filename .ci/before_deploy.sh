@@ -19,7 +19,7 @@ main() {
     test -f Cargo.lock || cargo generate-lockfile
 
     cargo clean
-    cross rustc --path $CRATE_NAME --target $TARGET --release --features="$FEATURE"
+    cross rustc --target $TARGET --release --features="$FEATURE" --package $CRATE_NAME 
 
     # copy linux
     cp target/$TARGET/release/lib$CRATE_NAME* $stage/
