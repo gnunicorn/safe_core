@@ -19,13 +19,13 @@ main() {
     test -f Cargo.lock || cargo generate-lockfile
 
     cargo clean
-    cross rustc --target $TARGET --release --features="$FEATURE"
+    cross rustc --path $CRATE_NAME --target $TARGET --release --features="$FEATURE"
 
     # copy linux
-    cp target/$TARGET/release/lib* $stage/
-    cp README.md $stage/
-    cp LICENSE $stage/
-    cp CHANGELOG.md $stage/
+    cp target/$TARGET/release/lib$CRATE_NAME* $stage/
+    cp $CRATE_NAME/README.md $stage/
+    cp $CRATE_NAME/LICENSE $stage/
+    cp $CRATE_NAME/CHANGELOG.md $stage/
 
     cd $stage
 
@@ -48,7 +48,6 @@ declare -a FEATURES=("use-mock-routing testing,dev")
 for crate in "${CRATES[@]}"
 do
     export CRATE_NAME="$crate"
-    cd $crate
     if [ $TRAVIS_OS_NAME = linux ]; then
 
         declare -a TARGETS=("i686-unknown-linux-gnu,linux-x32"
@@ -75,8 +74,8 @@ do
         done
     done
 
-    # move the package up
-    cp *.zip ../
-    # and leave the create
-    cd ..
+    # # move the package up
+    # cp *.zip ../
+    # # and leave the create
+    # cd ..
 done
