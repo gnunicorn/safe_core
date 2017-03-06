@@ -19,14 +19,17 @@ done
 echo "--- Test ffi_utils ---"
 cd ffi_utils
 cargo test --target $TARGET --verbose --release
+cd ..
 
 
 echo "--- Check compilation against actual routing ---"
 for PKG in "${TEST_CRATES[@]}"
 do
 	echo "-- compiling: ${PKG}"
-    cargo rustc --target $TARGET --verbose --release --package $PKG
-    cargo rustc --target $TARGET --verbose --features testing --release --package $PKG -- --test -Zno-trans
+	cd $PKG
+    cargo rustc --target $TARGET --verbose --release
+    cargo rustc --target $TARGET --verbose --features testing --release -- --test -Zno-trans
+    cd ..
 done
 
 
@@ -34,5 +37,7 @@ echo "--- Test against mock ---"
 for PKG in "${TEST_CRATES[@]}"
 do
 	echo "-- testing: ${PKG}"
-	cargo test --target $TARGET --verbose --release --features "$Features" --package $PKG
+	cd $PKG
+	cargo test --target $TARGET --verbose --release --features "$Features"
+	cd ..
 done
