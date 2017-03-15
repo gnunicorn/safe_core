@@ -46,7 +46,7 @@ matrix:
 
     - env: >
         TARGET=i686-unknown-linux-gnu
-        TARGET_NAME=linux-x32
+        TARGET_NAME=linux-ia32
       os: linux
 
       # static linked
