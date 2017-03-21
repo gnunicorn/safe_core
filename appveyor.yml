@@ -34,6 +34,8 @@ branches:
 
 clone_depth: 1
 
+
+
 configuration:
   - Release
 
