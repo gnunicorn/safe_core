@@ -116,9 +116,9 @@ before_script:
 
 
 script:
-  - if [ ! -z $CHECK_CLIPPY ]; then
+  - if [ ! -z $CLIPPY_VERSION ]; then
       bash .ci/clippy.sh;
-    elif [ -z $TRAVIS_TAG ]; then 
+    elif [ ! -z $TRAVIS_TAG ]; then 
       bash .ci/script.sh;
     fi
 
