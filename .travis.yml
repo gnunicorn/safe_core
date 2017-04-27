@@ -127,7 +127,7 @@ before_cache:
 
 before_deploy:
   - if [ ! -z $TRAVIS_TAG ]; then
-      bash .ci/before_deploy.sh;
+      travis_wait 30 bash .ci/before_deploy.sh;
     fi
 
 deploy:

@@ -23,7 +23,7 @@ main() {
 
     cargo clean
     cd $CRATE_NAME
-    cargo build --target $TARGET --release --features="$FEATURE" # --package $CRATE_NAME 
+    cargo build --target $TARGET --verbose --release --features="$FEATURE" # --package $CRATE_NAME 
 
     # copy linux
     cd ..
